@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import jdbc.model.Guest;
 
@@ -18,8 +20,7 @@ public class GuestsDAO {
 
 	public void save(Guest guest) {
 		try {
-			String sql = "INSERT INTO guests "
-					+ "(name, lastname, birthdate, nacionality, telephone, idreservation) "
+			String sql = "INSERT INTO guests " + "(name, lastname, birthdate, nacionality, telephone, idreservation) "
 					+ "values (?, ?, ?, ?, ?, ?)";
 			try (PreparedStatement pstm = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 				pstm.setString(1, guest.getName());
@@ -39,6 +40,50 @@ public class GuestsDAO {
 			}
 		} catch (SQLException ex) {
 			throw new RuntimeException("Falha ao salvar convidado! " + ex.getMessage());
+		}
+	}
+
+	public List<Guest> listGuests() {
+		List<Guest> guests = new ArrayList<>();
+		try {
+
+			String sql = "SELECT id, name, lastname, birthdate, nacionality, telephone, idreservation FROM guests";
+
+		try (PreparedStatement pstm = connection.prepareStatement(sql)) {
+			pstm.execute();
+			changeResultSetToGuest(guests, pstm);
+		}
+		return guests;
+	} catch (SQLException ex) {
+		throw new RuntimeException("Falha ao listar os hóspedes! " + ex.getMessage());
+	}
+}
+
+	public List<Guest> findBydId(String id) {
+		List<Guest> guests = new ArrayList<>();
+		try {
+			String sql = "SELECT id, name, lastname, birthdate, nacionality, telephone, idreservation FROM guests WHERE id = ?";
+
+			try (PreparedStatement pstm = connection.prepareStatement(sql)) {
+				pstm.setString(1, id);
+				pstm.executeUpdate();
+
+				changeResultSetToGuest(guests, pstm);
+			}
+			return guests;
+		} catch (SQLException ex) {
+			throw new RuntimeException("Falha ao buscar por id! " + ex.getMessage());
+		}
+
+	}
+
+	private void changeResultSetToGuest(List<Guest> reservations, PreparedStatement pstm) throws SQLException {
+		try (ResultSet rst = pstm.getResultSet()) {
+			while (rst.next()) {
+				Guest guests = new Guest(rst.getInt(1), rst.getString(2), rst.getString(3), rst.getDate(4),
+						rst.getString(5), rst.getString(6), rst.getInt(7));
+				reservations.add(guests);
+			}
 		}
 	}
 }
