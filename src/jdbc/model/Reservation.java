@@ -7,9 +7,25 @@ public class Reservation {
 	private Integer id;
 	private Date entryDate;
 	private Date exitDate;
-	private Double value;
+	private String value;
 	private String paymentMethod;
 	// Substituir para enum com valores padrão de métodos de pagamento
+
+	public Reservation(Date entryDate, Date exitDate, String value, String paymentMethod) {
+		super();
+		this.entryDate = entryDate;
+		this.exitDate = exitDate;
+		this.value = value;
+		this.paymentMethod = paymentMethod;
+	}
+
+	public Reservation(int id, Date entryDate, Date exitDate, String value, String paymentMethod) {
+		this.id = id;
+		this.entryDate = entryDate;
+		this.exitDate = exitDate;
+		this.value = value;
+		this.paymentMethod = paymentMethod;
+	}
 
 	public Integer getId() {
 		return id;
@@ -35,11 +51,11 @@ public class Reservation {
 		this.exitDate = exitDate;
 	}
 
-	public Double getValue() {
+	public String getValue() {
 		return value;
 	}
 
-	public void setValue(Double value) {
+	public void setValue(String value) {
 		this.value = value;
 	}
 
